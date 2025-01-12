@@ -1,0 +1,16 @@
+version: 2
+project_name: kubectl-node-maintain
+builds:
+  - main: ./cmd/kubectl-node-maintain/main.go
+    goos:
+      - linux
+      - darwin
+      - windows
+    goarch:
+      - amd64
+      - arm64
+    ldflags: "-s -w"
+release:
+  github:
+    owner: futuretea
+    name: kubectl-node-maintain
