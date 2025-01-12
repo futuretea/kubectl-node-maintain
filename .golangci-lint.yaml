@@ -1,0 +1,137 @@
+# Options for analysis running
+run:
+  # Timeout for analysis, e.g. 30s, 5m, default is 1m
+  timeout: 5m
+
+  # Include test files or not, default is true
+  tests: true
+
+  # Which dirs to skip: issues from them won't be reported
+  skip-dirs:
+    - vendor
+    - bin
+
+  # Which files to skip: they will be analyzed, but issues from them won't be reported
+  skip-files:
+    - ".*_test.go$"
+
+# Output configuration options
+output:
+  # Format: colored-line-number|line-number|json|tab|checkstyle|code-climate|junit-xml|github-actions
+  format: colored-line-number
+
+  # Print lines of code with issue, default is true
+  print-issued-lines: true
+
+  # Print linter name in the end of issue text, default is true
+  print-linter-name: true
+
+# All available settings of specific linters
+linters-settings:
+  errcheck:
+    # Report about not checking of errors in type assertions: `a := b.(MyStruct)`;
+    # default is false: such cases aren't reported by default.
+    check-type-assertions: true
+
+  govet:
+    # Report about shadowed variables
+    check-shadowing: true
+
+  gocyclo:
+    # Minimal code complexity to report, 30 by default
+    min-complexity: 15
+
+  maligned:
+    # Print struct with more effective memory layout or not, false by default
+    suggest-new: true
+
+  dupl:
+    # Tokens count to trigger issue, 150 by default
+    threshold: 100
+
+  goconst:
+    # Minimal length of string constant, 3 by default
+    min-len: 3
+    # Minimal occurrences count to trigger, 3 by default
+    min-occurrences: 2
+
+  lll:
+    # Max line length, lines longer will be reported. Default is 120.
+    line-length: 120
+
+  unused:
+    # Treat code as a program (not a library) and report unused exported identifiers
+    check-exported: false
+
+  unparam:
+    # Inspect exported functions, default is false
+    check-exported: true
+
+# Linters to run by default
+linters:
+  enable:
+    - errcheck     # Detect unchecked errors
+    - gosimple     # Suggest code simplifications
+    - govet       # Reports suspicious constructs
+    - ineffassign # Detect ineffective assignments
+    - staticcheck # Go static analysis
+    - typecheck   # Go type checker
+    - unused      # Find unused variables
+    - gocyclo     # Check function complexity
+    - gofmt       # Check if code was gofmt-ed
+    - goimports   # Check imports
+    - misspell    # Find commonly misspelled words
+    - revive      # Fast, configurable, extensible, flexible, and beautiful linter for Go
+    - gosec       # Security checker
+    - prealloc    # Find slice declarations that could potentially be preallocated
+    - unconvert   # Remove unnecessary type conversions
+    - whitespace  # Tool for detection of leading and trailing whitespace
+
+  disable:
+    - wsl         # Too opinionated about whitespace
+    - godox       # TODO/FIXME/BUG comments are fine
+    - funlen      # Function length is not always indicative of complexity
+    - gochecknoglobals # Global variables are sometimes necessary
+
+# Issues configuration
+issues:
+  # Maximum count of issues with the same text
+  max-same-issues: 3
+
+  # Maximum issues count per one linter
+  max-issues-per-linter: 50
+
+  # Excluding configuration
+  exclude-rules:
+    # Exclude some linters from running on tests files.
+    - path: _test\.go
+      linters:
+        - gocyclo
+        - errcheck
+        - dupl
+        - gosec
+
+    # Exclude known linters from partially hard-coded array
+    - text: "magic number:"
+      linters:
+        - gomnd
+
+    # Exclude some staticcheck messages
+    - linters:
+        - staticcheck
+      text: "SA1019:"  # Using a deprecated function, variable, constant or field
+
+    # Exclude lll issues for long lines with go:generate
+    - linters:
+        - lll
+      source: "^//go:generate "
+
+# Severity configuration
+severity:
+  # Default value is empty string (severity for all linters)
+  default-severity: error
+  # You can override severity for specific linters
+  rules:
+    - linters:
+        - lll
+      severity: warning 
